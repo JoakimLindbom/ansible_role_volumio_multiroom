@@ -1,0 +1,20 @@
+---
+- name: Clone Volumio-multiroom repo
+  git:
+    repo: https://github.com/Saiyato/volumio-snapcast-plugin.git
+    dest: "{{ install_dir }}"
+    force: yes
+
+- name: Delete ZIP
+  file:
+    path: "{{ install_dir }}/volumio-snapcast-plugin.zip"
+    state: absent
+
+- name: Install plug-in
+  shell: |
+    cd {{ install_dir }}
+    volumio plugin install
+
+    exit 0
+
+# Clean up of install dir needed?

@@ -1,0 +1,17 @@
+---
+galaxy_info:
+  author: Joakim Lindbom
+  description: Install Volumio 2 multi-room plugin from offical repo
+  company:
+  license: GPLv2
+  min_ansible_version: 1.9
+  platforms:
+  - name: Volumio
+    versions:
+    - 2
+  galaxy_tags:
+  - mpd
+  - musicpd
+  - music
+  - volumio
+dependencies: []
