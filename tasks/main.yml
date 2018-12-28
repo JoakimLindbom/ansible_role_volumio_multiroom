@@ -1,20 +1,39 @@
 ---
-- name: Clone Volumio-multiroom repo
-  git:
-    repo: https://github.com/Saiyato/volumio-snapcast-plugin.git
-    dest: "{{ install_dir }}"
-    force: yes
+- name: Check if plugin already installed
+  stat:
+    path: /data/plugins/miscellanea/snapcast/install.sh
+  register: plugin_details
 
-- name: Delete ZIP
-  file:
-    path: "{{ install_dir }}/volumio-snapcast-plugin.zip"
-    state: absent
+- debug:
+    msg: "The plugin is installed. Skipping install."
+  when: plugin_details.stat.exists
 
-- name: Install plug-in
-  shell: |
-    cd {{ install_dir }}
-    volumio plugin install
+- name: Install Volumio-multiroom plugin
+  block:
+  - name: Clone Volumio-multiroom repo
+    git:
+      repo: https://github.com/Saiyato/volumio-snapcast-plugin.git
+      dest: "{{ install_dir }}"
+      version: master
+      force: yes
 
-    exit 0
+  - name: Delete ZIP
+    file:
+      path: "{{ install_dir }}/volumio-snapcast-plugin.zip"
+      state: absent
+
+  - name: Install plug-in
+    shell: |
+      cd {{ install_dir }}
+      volumio plugin install
+
+      exit 0
+    async: 300
+    poll: 300
+    register: commandresult
+    #failed_when: '"Plugin snapcast already exists" in commandresult.stderr'
+
+  - debug: var="{{ commandresult.stdout_lines }}"
+  when: not plugin_details.stat.exists
 
 # Clean up of install dir needed?
